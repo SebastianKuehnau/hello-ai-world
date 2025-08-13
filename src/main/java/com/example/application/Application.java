@@ -2,6 +2,7 @@ package com.example.application;
 
 import com.example.application.data.SamplePersonRepository;
 import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.theme.Theme;
 import javax.sql.DataSource;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 @PageTitle("Hello AI World")
 @Theme(value = "hello-ai-world")
+@Push
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {
