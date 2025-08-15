@@ -43,24 +43,27 @@ public class ChatBotView extends Composite<VerticalLayout> {
 
     private void onSubmit(MessageInput.SubmitEvent submitEvent) {
         //create and handle a prompt message
-        var promptMessage = new MessageListItem(submitEvent.getValue(),
-                Instant.now(), "User");
+        var promptMessage = new MessageListItem(submitEvent.getValue(), Instant.now(), "User");
         promptMessage.setUserColorIndex(0);
         messageList.addItem(promptMessage);
 
-        //create amd handle response message
-        var responseMessage = new MessageListItem("",
-                Instant.now(), "Bot");
+        //create and handle the response message
+        var responseMessage = new MessageListItem("", Instant.now(), "Bot");
         responseMessage.setUserColorIndex(1);
         messageList.addItem(responseMessage);
 
         //append a response message to the existing UI
+        var userPrompt = submitEvent.getValue();
         var uiOptional = submitEvent.getSource().getUI();
-        chatService.chatStream(submitEvent.getValue()).subscribe(token ->
-                uiOptional.ifPresent(ui -> ui.access(() -> {
-                    responseMessage.appendText(token);
-                    scroller.scrollToBottom();
-                }))
-        );
+        var ui = uiOptional.orElse(null); //implementation via ifPresent also possible
+
+        if (ui != null) {
+            chatService.chatStream(userPrompt)
+                    .subscribe(token ->
+                            ui.access(() -> {
+                                responseMessage.appendText(token);
+                                scroller.scrollToBottom();
+                            }));
+        }
     }
 }
