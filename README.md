@@ -1,20 +1,53 @@
 # Hello AI World
 
-This project can be used as a starting point to create your own Vaadin application with Spring Boot.
-It contains all the necessary configuration and some placeholder files to get you started.
+A Vaadin + Spring Boot starter that demonstrates an AI-powered chat experience using Spring AI. It provides a simple
+chat UI and streams responses from a configured LLM provider with conversation memory.
+
+## Tech Stack
+
+- Java 21
+- Spring Boot
+- Vaadin Flow
+- Spring AI (ChatClient with conversation memory)
+- Spring Data JPA
+- Maven (Wrapper included)
+
+## Prerequisites
+
+- Java Development Kit (JDK) 21
+- Internet access (required for downloading frontend tooling and calling the AI provider)
+- Maven is not required globally (the Maven Wrapper `./mvnw` is included)
+
+Note: Vaadin manages required frontend tooling automatically during development builds.
+
+## Configure your AI provider
+
+This project uses Spring AI. You must provide credentials and a model for your preferred provider.
+
+Add the relevant properties (for example in `src/main/resources/application.properties` or via environment variables).
+
+- Example: OpenAI
+
+    ```
+    spring.ai.openai.api-key=${OPENAI_API_KEY} 
+    spring.ai.openai.chat.options.model=gpt-4o-mini
+    ```
 
 ## Running the application
 
-Open the project in an IDE. You can download the [IntelliJ community edition](https://www.jetbrains.com/idea/download) if you do not have a suitable IDE already.
+Open the project in an IDE. You can download the [IntelliJ community edition](https://www.jetbrains.com/idea/download)
+if you do not have a suitable IDE already.
 Once opened in the IDE, locate the `Application` class and run the main method using "Debug".
 
-For more information on installing in various IDEs, see [how to import Vaadin projects to different IDEs](https://vaadin.com/docs/latest/getting-started/import).
+For more information on installing in various IDEs,
+see [how to import Vaadin projects to different IDEs](https://vaadin.com/docs/latest/getting-started/import).
 
-If you install the Vaadin plugin for IntelliJ, you should instead launch the `Application` class using "Debug using HotswapAgent" to see updates in the Java code immediately reflected in the browser.
+If you install the Vaadin plugin for IntelliJ, you should instead launch the `Application` class using "Debug using
+HotswapAgent" to see updates in the Java code immediately reflected in the browser.
 
 ## Deploying to Production
 
-The project is a standard Maven project. To create a production build, call 
+The project is a standard Maven project. To create a production build, call
 
 ```
 ./mvnw clean package -Pproduction
@@ -22,30 +55,48 @@ The project is a standard Maven project. To create a production build, call
 
 If you have Maven globally installed, you can replace `./mvnw` with `mvn`.
 
-This will build a JAR file with all the dependencies and front-end resources,ready to be run. The file can be found in the `target` folder after the build completes.
-You then launch the application using 
+This will build a JAR file with all the dependencies and front-end resources,ready to be run. The file can be found in
+the `target` folder after the build completes.
+You then launch the application using
+
 ```
 java -jar target/hello-ai-world-1.0-SNAPSHOT.jar
 ```
 
+## What you get
+
+- A chat page as the default route that:
+    - Displays a scrolling message list.
+    - Streams tokens from the AI provider into the UI in real time.
+    - Uses conversation memory so the model can consider prior messages.
+
 ## Project structure
 
-- `MainLayout.java` in `src/main/java` contains the navigation setup (i.e., the
-  side/top bar and the main menu). This setup uses
-  [App Layout](https://vaadin.com/docs/components/app-layout).
-- `views` package in `src/main/java` contains the server-side Java views of your application.
-- `views` folder in `src/main/frontend` contains the client-side JavaScript views of your application.
-- `themes` folder in `src/main/frontend` contains the custom CSS styles.
+- `src/main/java`
+    - `.../Application.java` – Spring Boot entry point and application setup.
+    - `.../views/...` – Vaadin views. The main chat UI lives here and is mapped to the root route.
+    - `.../services/...` – Application services (e.g., the AI chat service that wraps Spring AI ChatClient and memory).
+    - `.../data/...` – Entities and repositories (JPA). The app can initialize demo data only when the database is
+      empty.
+- `src/main/resources`
+    - `application.properties` – Configuration (including Spring AI properties).
+    - Optional SQL init scripts (executed only when the DB is empty).
+- `src/main/frontend`
+    - `themes/` – Custom theme for Vaadin.
+    - `views/` – Client-side assets (if any).
+
+## Troubleshooting
+
+- AI responses don’t appear:
+    - Ensure your API key and model/deployment are correctly configured.
+    - Check application logs for provider errors.
+- Frontend build is slow on first run:
+    - Vaadin downloads and prepares tooling the first time; subsequent runs are faster.
+- Port conflicts:
+    - Change the port via `server.port` in `application.properties` or `--server.port=9090`.
 
 ## Useful links
 
-- Read the documentation at [vaadin.com/docs](https://vaadin.com/docs).
-- Follow the tutorial at [vaadin.com/docs/latest/tutorial/overview](https://vaadin.com/docs/latest/tutorial/overview).
-- Create new projects at [start.vaadin.com](https://start.vaadin.com/).
-- Search UI components and their usage examples at [vaadin.com/docs/latest/components](https://vaadin.com/docs/latest/components).
-- View use case applications that demonstrate Vaadin capabilities at [vaadin.com/examples-and-demos](https://vaadin.com/examples-and-demos).
-- Build any UI without custom CSS by discovering Vaadin's set of [CSS utility classes](https://vaadin.com/docs/styling/lumo/utility-classes). 
-- Find a collection of solutions to common use cases at [cookbook.vaadin.com](https://cookbook.vaadin.com/).
-- Find add-ons at [vaadin.com/directory](https://vaadin.com/directory).
-- Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Forum](https://vaadin.com/forum).
-- Report issues, create pull requests in [GitHub](https://github.com/vaadin).
+- Vaadin Docs: https://vaadin.com/docs
+- Spring Boot Docs: https://docs.spring.io/spring-boot/docs/current/reference/html/
+- Spring AI Docs: https://docs.spring.io/spring-ai/reference/
