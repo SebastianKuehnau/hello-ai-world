@@ -14,6 +14,7 @@ import com.vaadin.flow.router.RouteAlias;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @PageTitle("Chat Bot")
 @Route("")
@@ -23,14 +24,15 @@ public class ChatBotView extends Composite<VerticalLayout> {
 
     private final ChatService chatService;
     private final MessageList messageList;
-    private final Scroller scroller;
+    private final String chatId = UUID.randomUUID().toString();
 
     public ChatBotView(ChatService chatService) {
         this.chatService = chatService;
 
         //Create a scrolling MessageList
         messageList = new MessageList();
-        scroller = new Scroller(messageList);
+        var scroller = new Scroller(messageList);
+        scroller.setHeightFull();
         getContent().addAndExpand(scroller);
 
         //create a MessageInput and set a submit-listener
@@ -58,12 +60,10 @@ public class ChatBotView extends Composite<VerticalLayout> {
         var ui = uiOptional.orElse(null); //implementation via ifPresent also possible
 
         if (ui != null) {
-            chatService.chatStream(userPrompt)
+            chatService.chatStream(userPrompt, chatId)
                     .subscribe(token ->
-                            ui.access(() -> {
-                                responseMessage.appendText(token);
-                                scroller.scrollToBottom();
-                            }));
+                            ui.access(() ->
+                                    responseMessage.appendText(token)));
         }
     }
 }

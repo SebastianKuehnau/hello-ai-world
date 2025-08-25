@@ -23,8 +23,20 @@ public class ChatService {
     }
 
     public Flux<String> chatStream(String userInput) {
-        //send the user input to the chatbot and return responses as a stream
+
+        //send the user input to the chatbot with a default chat id and
+        // returns responses as a stream
+        return chatStream(userInput, "default");
+    }
+
+    public Flux<String> chatStream(String userInput, String chatId) {
+
+        //send the user input to the chatbot for a specific chat id and
+        // returns responses as a stream
         return chatClient.prompt()
+                .advisors(advisorSpec ->
+                        advisorSpec.param(ChatMemory.CONVERSATION_ID, chatId)
+                )
                 .user(userInput)
                 .stream()
                 .content();
