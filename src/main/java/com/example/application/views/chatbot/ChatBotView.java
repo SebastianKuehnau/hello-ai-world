@@ -24,6 +24,8 @@ public class ChatBotView extends Composite<VerticalLayout> {
 
     private final ChatService chatService;
     private final MessageList messageList;
+
+    //to identify the chat session and keep the context secured
     private final String chatId = UUID.randomUUID().toString();
 
     public ChatBotView(ChatService chatService) {
@@ -31,9 +33,10 @@ public class ChatBotView extends Composite<VerticalLayout> {
 
         //Create a scrolling MessageList
         messageList = new MessageList();
+        messageList.setAnnounceMessages(true);
         var scroller = new Scroller(messageList);
-        scroller.setHeightFull();
         getContent().addAndExpand(scroller);
+        scroller.setHeightFull();
 
         //create a MessageInput and set a submit-listener
         var messageInput = new MessageInput();
