@@ -1,3 +1,16 @@
 @import url('./main-layout.css');
 @import url('./views/chat-bot-view.css');
 @import url('./views/master-detail-view.css');
+
+.chat.streaming vaadin-scroller {
+    flex: 1;
+    scroll-snap-type: y proximity;
+}
+
+
+.chat.streaming vaadin-scroller::after {
+    display: block;
+    content: "";
+    scroll-snap-align: end;
+    min-height: 1px;
+}

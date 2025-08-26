@@ -5,6 +5,8 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.messages.MessageInput;
 import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Menu;
@@ -33,10 +35,10 @@ public class ChatBotView extends Composite<VerticalLayout> {
 
         //Create a scrolling MessageList
         messageList = new MessageList();
-        messageList.setAnnounceMessages(true);
+        messageList.setWidthFull();
+        messageList.addClassName("streaming");
         var scroller = new Scroller(messageList);
         getContent().addAndExpand(scroller);
-        scroller.setHeightFull();
 
         //create a MessageInput and set a submit-listener
         var messageInput = new MessageInput();
@@ -44,6 +46,7 @@ public class ChatBotView extends Composite<VerticalLayout> {
         messageInput.setWidthFull();
 
         getContent().add(messageInput);
+        getContent().addClassName("chat");
     }
 
     private void onSubmit(MessageInput.SubmitEvent submitEvent) {
@@ -65,8 +68,18 @@ public class ChatBotView extends Composite<VerticalLayout> {
         if (ui != null) {
             chatService.chatStream(userPrompt, chatId)
                     .subscribe(token ->
-                            ui.access(() ->
-                                    responseMessage.appendText(token)));
+                                    ui.access(() -> {
+                                                addClassName("streaming");
+                                                responseMessage.appendText(token);
+                                                //removed because of scrolling issues while streaming
+                                                //scroller.scrollToBottom();
+                                                //add css for autoscroll
+                                            }
+                                    ),
+                            throwable -> Notification
+                                    .show("Error: " + throwable.getMessage())
+                                    .addThemeVariants(NotificationVariant.LUMO_ERROR),
+                            () -> ui.access(() -> removeClassName("streaming")));
         }
     }
 }
